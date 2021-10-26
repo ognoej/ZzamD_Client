@@ -38,8 +38,11 @@ public class MopController : MonoBehaviour
     public void Push_MakeobjBtn(string charctername)
     {
         var newobj = Instantiate(player_prefab) as GameObject;
-        newobj.GetComponent<MyObject_Controller>().state = "idle";
+        var tempcompo = newobj.GetComponent<Object_Controller>();
+        tempcompo.state = "idle";
+        tempcompo.isPTeam = true;
         newobj.transform.position = new Vector3(-3, 0, 0);
+        
         mops.Player_list.Add(newobj);
         print("아군추가");
 
@@ -48,7 +51,9 @@ public class MopController : MonoBehaviour
     public void Generate_EnermyBtn()
     {
         var newobj = Instantiate(mob_prefab) as GameObject;
-        newobj.GetComponent<EnermyControlloer>().state = "idle";
+        var tempcompo = newobj.GetComponent<Object_Controller>();
+        tempcompo.state = "idle";
+        tempcompo.isPTeam = false;
         newobj.transform.position = new Vector3(3, 0, 0);
         mops.Enermy_list.Add(newobj);
         print("적추가");
