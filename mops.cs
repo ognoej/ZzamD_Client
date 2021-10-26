@@ -16,4 +16,19 @@ public class mops : MonoBehaviour
         Enermy_list = new List<GameObject>();
         print("생성");
     }
+    public static void EleminateObject(GameObject _object,bool _isPteam)
+    {
+        if(_isPteam)
+        {
+            Player_list.Remove(_object);
+            return;
+        }
+        else
+        {
+            Enermy_list.Remove(_object);
+            return;
+        }
+
+
+    }
 }

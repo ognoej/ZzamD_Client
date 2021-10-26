@@ -41,6 +41,7 @@ public class MopController : MonoBehaviour
         var tempcompo = newobj.GetComponent<Object_Controller>();
         tempcompo.state = "idle";
         tempcompo.isPTeam = true;
+        tempcompo.m_attackspeed = 2.5f;
         newobj.transform.position = new Vector3(-3, 0, 0);
         
         mops.Player_list.Add(newobj);
@@ -54,6 +55,7 @@ public class MopController : MonoBehaviour
         var tempcompo = newobj.GetComponent<Object_Controller>();
         tempcompo.state = "idle";
         tempcompo.isPTeam = false;
+        tempcompo.m_attackspeed = 3f;
         newobj.transform.position = new Vector3(3, 0, 0);
         mops.Enermy_list.Add(newobj);
         print("적추가");

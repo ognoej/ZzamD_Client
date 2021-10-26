@@ -5,32 +5,41 @@ using UnityEngine;
 public class Object_Controller : MonoBehaviour
 {
     private Animator m_animator;
+
+    // 상태
     public string state = "idle";
 
+    // 공격시간 카운터
     float m_attacktime = 0;
-    float m_attackspeed = 3.0f;
 
+    // 적 아군 구분 boolean
     public bool isPTeam = true;
 
-    GameObject target;
-
-    private float m_attackrange = 0.7f;
-
-    [SerializeField] float m_speed = 0.5f;
-    [SerializeField] float m_jumpForce = 7.5f;
-    [SerializeField] float m_rollForce = 6.0f;
-    [SerializeField] bool m_noBlood = false;
-    [SerializeField] GameObject m_slideDust;
-
+    // 타겟과의 거리
     float distancefromtarget = 0;
 
-    private bool m_grounded = false;
-    private bool m_rolling = false;
-    private int m_facingDirection = 1;
-    private int m_currentAttack = 0;
-    private float m_timeSinceAttack = 0.0f;
-    private float m_delayToIdle = 0.0f;
+    SpriteRenderer m_renderer;
 
+    float m_deathTime = 2.0f;
+
+    // 타겟 오브젝트
+    GameObject target;
+
+    // 이동속도
+    [SerializeField] public float m_speed = 0.5f;
+
+    // 공격속도
+    [SerializeField] public float m_attackspeed = 3.0f;
+
+    // 공격 범위
+    [SerializeField] public float m_attackrange = 0.7f;
+
+    // 피통
+    [SerializeField] public float m_hp = 10;
+
+    // 데미지
+    [SerializeField] public float m_damage = 5;
+    
         // Start is called before the first frame update
         void Start()
     {
@@ -42,14 +51,12 @@ public class Object_Controller : MonoBehaviour
     {
         switch (state)
         {
-
+            // 기본 애니메이션
             case "idle":
                 {
                     if (isPTeam)
                     {
-                        m_delayToIdle -= Time.deltaTime;
-                        if (m_delayToIdle < 0)
-                            m_animator.SetInteger("AnimState", 0);
+                        m_animator.SetInteger("AnimState", 0);
 
                         if (mops.Enermy_list.Count != 0)
                         {
@@ -70,6 +77,8 @@ public class Object_Controller : MonoBehaviour
                         break;
                     }
                 }
+
+            // 추적 애니메이션
             case "follow":
                 {
                     if(!targetserch())
@@ -91,12 +100,13 @@ public class Object_Controller : MonoBehaviour
                     }
                     else
                     {
-                        print("적 추적중");
                         m_animator.SetInteger("AnimState", 2);
                     }
                     chaseEnermy();
                     break;
                 }
+
+            // 공격 애니메이션
             case "attack":
                 {
                     // 어택 idle 애니
@@ -107,12 +117,22 @@ public class Object_Controller : MonoBehaviour
                     if (m_attacktime < 0)
                     {
                         m_animator.SetTrigger("Attack");
+                        StartCoroutine(attacktarget());
                         m_attacktime = m_attackspeed;
+                    }
+                    if(!targetserch())
+                    {
+                        state = "idle";
+                        break;
                     }
                     break;
                 }
+
+            // 죽음 애니메이션
             case "death":
                 {
+
+                    StartCoroutine(DeathandDestroy());
                     break;
                 }
         }
@@ -234,5 +254,51 @@ public class Object_Controller : MonoBehaviour
             return enermy;
         }
     }
+
+    IEnumerator attacktarget()
+    {
+        var temptarget = target.GetComponent<Object_Controller>();
+        print(temptarget.m_hp);
+        temptarget.m_hp -= m_damage;
+        if(temptarget.m_hp < 0)
+        {
+            temptarget.state = "death";
+            yield return null;
+        }
+
+        var renderer = target.GetComponent<SpriteRenderer>();
+        yield return new WaitForSeconds(m_attackspeed*0.15f);
+        renderer.color = new Color32(255, 60, 60, 255);
+        yield return new WaitForSeconds(0.2f);
+        renderer.color = new Color32(255, 255, 255, 255);
+        yield return null;
+
+    }
+
+    IEnumerator DeathandDestroy()
+    {
+        m_animator.SetTrigger("Death");
+
+        yield return new WaitForSeconds(m_deathTime);
+
+        Destroy(gameObject);
+        mops.EleminateObject(gameObject, isPTeam);
+
+        yield return null;
+    }
+
+    //void attacktarget()
+    //{
+    //    target.GetComponent<Object_Controller>().m_hp -= m_damage;
+    //    m_renderer = target.GetComponent<SpriteRenderer>();
+    //    print("타겟색변경");
+    //    m_renderer.color = new Color(255,60,60,255);
+    //
+    //    Invoke("colorchangetooriginal", 0.5f);
+    //}
+    //void colorchangetooriginal()
+    //{
+    //    m_renderer.color = new Color(255, 255, 255, 255);
+    //}
 
 }
