@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Object_Controller : MonoBehaviour
 {
@@ -26,7 +27,7 @@ public class Object_Controller : MonoBehaviour
     GameObject target;
 
     // 이동속도
-    [SerializeField] public float m_speed = 0.5f;
+    [SerializeField] public float m_speed = 1.0f;
 
     // 공격속도
     [SerializeField] public float m_attackspeed = 3.0f;
@@ -141,6 +142,7 @@ public class Object_Controller : MonoBehaviour
     void chaseEnermy()
     {
         Vector3 dir = target.transform.position - transform.position;
+        dir.Normalize();
         gameObject.transform.localPosition += (dir * m_speed * Time.deltaTime);
     }
     bool targetserch()
@@ -260,7 +262,16 @@ public class Object_Controller : MonoBehaviour
         var temptarget = target.GetComponent<Object_Controller>();
         print(temptarget.m_hp);
         temptarget.m_hp -= m_damage;
-        if(temptarget.m_hp < 0)
+
+        //var ftext = Instantiate(mops.floatingtext,gameObject.transform.position,Quaternion.Euler(Vector3.zero)) as GameObject;
+        //ftext.GetComponent<Text>().text = m_damage.ToString();
+        //
+        //Vector3 uiPosition = Camera.main.WorldToScreenPoint(gameObject.transform.position);
+        //ftext.transform.localPosition = uiPosition;
+        //ftext.transform.SetParent(gameObject.transform);
+      
+
+        if (temptarget.m_hp < 0)
         {
             temptarget.state = "death";
             yield return null;
@@ -286,19 +297,5 @@ public class Object_Controller : MonoBehaviour
 
         yield return null;
     }
-
-    //void attacktarget()
-    //{
-    //    target.GetComponent<Object_Controller>().m_hp -= m_damage;
-    //    m_renderer = target.GetComponent<SpriteRenderer>();
-    //    print("타겟색변경");
-    //    m_renderer.color = new Color(255,60,60,255);
-    //
-    //    Invoke("colorchangetooriginal", 0.5f);
-    //}
-    //void colorchangetooriginal()
-    //{
-    //    m_renderer.color = new Color(255, 255, 255, 255);
-    //}
 
 }

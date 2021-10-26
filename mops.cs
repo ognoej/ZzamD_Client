@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class mops : MonoBehaviour
 {
+   public static GameObject floatingtext;
+
    public static mops Instance;
 
    public static List<GameObject> Player_list;
@@ -14,7 +16,11 @@ public class mops : MonoBehaviour
         Instance = this;
         Player_list = new List<GameObject>();
         Enermy_list = new List<GameObject>();
-        print("생성");
+        floatingtext = Resources.Load<GameObject>("Prefabs/floatingtext");
+        if(floatingtext ==null)
+        {
+            Debug.Log("플로팅텍스트 불러오기 실패");
+        }
     }
     public static void EleminateObject(GameObject _object,bool _isPteam)
     {

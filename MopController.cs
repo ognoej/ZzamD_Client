@@ -59,5 +59,7 @@ public class MopController : MonoBehaviour
         newobj.transform.position = new Vector3(3, 0, 0);
         mops.Enermy_list.Add(newobj);
         print("적추가");
+
+        
     }
 }
